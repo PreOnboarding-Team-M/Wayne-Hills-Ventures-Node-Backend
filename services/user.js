@@ -1,8 +1,11 @@
-const userController = require('../controller/user');
-const signUp = async (req, res) => {
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const userRepository = require('../repository/user');
+
+const signUp = async body => {
   try {
-    const { email, password, sex, age, phone } = req.body;
-    await userController.signUp(email, password, sex, age, phone);
+    const { email, password } = body;
+    const userSignUpInfo = await userRepository.signUp(email, password);
     res.status(200).json({ message: 'SUCCESS' });
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });

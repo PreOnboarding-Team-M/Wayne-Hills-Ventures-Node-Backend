@@ -1,19 +1,12 @@
-const db = require('../models/index');
-const SQ = require('sequelize');
-const Sequelize = SQ.Sequelize;
-const sequelize = require('sequelize');
-const user = require('../models/user');
-const User = db.user;
-const Op = sequelize.Op;
-
-async function signUp(email, password, sex, age, phone) {
-  return await User.create({
-    email: email,
-    password: password,
-    sex: sex,
-    age: age,
-    phone: phone,
-  });
-}
+const userController = require('../services/user');
+const signUp = async (req, res) => {
+  try {
+    const { email, password, sex, age, phone } = req.body;
+    await userController.signUp(email, password, sex, age, phone);
+    res.status(200).json({ message: 'SUCCESS' });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ message: error.message });
+  }
+};
 
 module.exports = { signUp };
