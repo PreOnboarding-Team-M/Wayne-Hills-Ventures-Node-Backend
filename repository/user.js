@@ -15,5 +15,15 @@ async function signUp(email, password, sex, age, phone) {
     phone: phone,
   });
 }
+async function getUserByEmail(email) {
+  const [existingUser] = await User.findAll({
+    attributes: ['email'],
+    where: {
+      email: email,
+    },
+  });
 
-module.exports = { signUp };
+  return existingUser;
+}
+
+module.exports = { signUp, getUserByEmail };

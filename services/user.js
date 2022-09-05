@@ -1,15 +1,25 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const userRepository = require('../repository/user');
+const { createError } = require('../err/createError');
 
-const signUp = async body => {
-  try {
-    const { email, password } = body;
-    const userSignUpInfo = await userRepository.signUp(email, password);
-    res.status(200).json({ message: 'SUCCESS' });
-  } catch (error) {
-    res.status(error.statusCode || 500).json({ message: error.message });
+const salt = bcrypt.genSaltSync();
+
+const signUp = async (email, password, sex, age, phone) => {
+  const existingUser = await userRepository.getUserByEmail(email);
+  if (existingUser) {
+    const error = createError('EXISTING_USER', 409);
+    throw error;
   }
+
+  password = await bcrypt.hash(password, salt);
+  const userSignUpInfo = await userRepository.signUp(
+    email,
+    password,
+    sex,
+    age,
+    phone,
+  );
 };
 
 module.exports = { signUp };
